@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lowkey Lofi: Non-Disruptive Live Lofi Channels</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body class="bg-slate-900 text-gray-100 overflow-x-hidden">
+    <div class="fixed top-4 left-4 z-50">
+      <img
+        src="lowkeylofi.png"
+        alt="Logo"
+        class="w-40 h-40 rounded-lg shadow-lg hover:scale-105 transition-transform"
+      />
+    </div>
+    <!-- Floating Background Elements -->
+    <div
+      class="fixed -top-32 -right-64 w-[800px] h-[800px] bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"
+    ></div>
+    <div
+      class="fixed -bottom-64 -left-64 w-[800px] h-[800px] bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"
+    ></div>
+
+    <!-- YouTube Player -->
+    <div id="lofi-player" class="fixed inset-0 w-full h-full pointer-events-none"></div>
+
+    <!-- App Launcher Menu -->
+    <div class="app-launcher">
+      <button 
+        id="pomodoro-launcher" 
+        class="app-button" 
+        title="Pomodoro Timer"
+      >
+        <i class="fas fa-clock"></i>
+      </button>
+      <button 
+        id="todo-launcher" 
+        class="app-button" 
+        title="Todo List"
+      >
+        <i class="fas fa-tasks"></i>
+      </button>
+    </div>
+
+    <!-- MacBook Dock -->
+    <div id="dock" class="dock">
+      <div class="minimized-icon">
+        <img 
+          width="50" 
+          height="50" 
+          src="https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/50/external-pomodoro-date-and-time-tanah-basah-glyph-tanah-basah.png" 
+          alt="pomodoro"
+        />
+      </div>
+      <div class="dock-content">
+        <!-- Custom icons for each channel -->
+        <button onclick="changeChannel('M-4zE2GG87w', this)" title="Spring Vibes">
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/spring.png"
+            alt="spring"
+          />
+        </button>
+        <button onclick="changeChannel('r3JG5gBLbpA', this)" title="Lost in Japan">
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/city-buildings.png"
+            alt="city-buildings"
+          />
+        </button>
+        <button onclick="changeChannel('vrB9wC6quaU', this)" title="Rooftop Rain">
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/balcony.png"
+            alt="balcony"
+          />
+        </button>
+        <button
+          onclick="changeChannel('92PvEVG0sKI', this)"
+          title="Rooftop in The City"
+        >
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/laptop.png"
+            alt="laptop"
+          />
+        </button>
+        <button onclick="changeChannel('hB2LatX6NLg', this)" title="Shibuya Nights">
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/japan.png"
+            alt="japan"
+          />
+        </button>
+        <button onclick="changeChannel('vYIYIVmOo3Q', this)" title="Rainy Nights">
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-glyphs/30/rain--v1.png"
+            alt="rain--v1"
+          />
+        </button>
+        <button onclick="changeChannel('CX9_h23icoM', this)" title="Radio Lofi">
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/tabletop-radio.png"
+            alt="tabletop-radio"
+          />
+        </button>
+        <button
+          onclick="changeChannel('yf5NOyy1SXU', this)"
+          title="Room with City View"
+        >
+          <img
+            width="20"
+            height="20"
+            src="https://img.icons8.com/ios-filled/50/empty-bed.png"
+            alt="empty-bed"
+          />
+        </button>
+      </div>
+    </div>
+
+    <!-- Now Playing Card -->
+    <div id="now-playing-card" class="now-playing-card">
+      <i class="fas fa-music"></i>
+      <span id="now-playing-text">Spring Vibes</span>
+    </div>
+
+    <!-- Pomodoro Timer Panel -->
+    <div id="pomodoro-window" class="mini-window" style="display: none;">
+      <div class="header">
+        <div class="header-left">
+            <div class="app-title">Pomodoro Timer</div>
+        </div>
+        <div class="close-btn" id="close-pomodoro">×</div>
+      </div>
+      
+      <!-- Progress Dots -->
+      <div class="progress-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+      </div>
+      
+      <!-- Timer Display -->
+      <div class="timer-display">
+          <div id="particles-container" class="timer-particles"></div>
+          <div class="timer-time">25:00</div>
+      </div>
+      
+      <!-- Timer Controls -->
+      <div class="timer-controls">
+          <button class="control-button secondary" id="reset-btn">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <polyline points="23 20 23 14 17 14"></polyline>
+                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              </svg>
+          </button>
+          <button class="control-button primary" id="start-pause-btn">
+              <span id="start-pause-text">Start</span>
+          </button>
+          <button class="control-button secondary" id="settings-btn">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+          </button>
+      </div>
+      
+      <!-- Timer Tabs -->
+      <div class="timer-tabs">
+          <button class="tab-button active" data-mode="pomodoro">Pomodoro</button>
+          <button class="tab-button" data-mode="shortBreak">Short Break</button>
+          <button class="tab-button" data-mode="longBreak">Long Break</button>
+      </div>
+    </div>
+
+    <!-- Settings Panel for Pomodoro -->
+    <div class="settings-panel" id="settings-panel">
+      <div class="settings-backdrop"></div>
+      <div class="settings-content">
+          <div class="settings-header">
+              <h2>Settings</h2>
+              <button class="close-btn" id="close-settings">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+              </button>
+          </div>
+          
+          <div class="settings-section">
+              <h3>Timer Duration</h3>
+              
+              <div class="setting-item">
+                  <label for="pomodoro-length">Pomodoro</label>
+                  <div class="input-with-unit">
+                      <input type="number" id="pomodoro-length" value="25" min="1" max="60">
+                      <span class="unit">min</span>
+                  </div>
+              </div>
+              
+              <div class="setting-item">
+                  <label for="short-break-length">Short Break</label>
+                  <div class="input-with-unit">
+                      <input type="number" id="short-break-length" value="5" min="1" max="30">
+                      <span class="unit">min</span>
+                  </div>
+              </div>
+              
+              <div class="setting-item">
+                  <label for="long-break-length">Long Break</label>
+                  <div class="input-with-unit">
+                      <input type="number" id="long-break-length" value="15" min="1" max="60">
+                      <span class="unit">min</span>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="settings-section">
+              <h3>Sound</h3>
+              
+              <div class="setting-item toggle">
+                  <label for="sound-toggle">Timer End Sound</label>
+                  <label class="switch">
+                      <input type="checkbox" id="sound-toggle" checked>
+                      <span class="slider round"></span>
+                  </label>
+              </div>
+              
+              <div class="setting-item">
+                  <label for="sound-theme">Sound Theme</label>
+                  <select id="sound-theme">
+                      <option value="minimal">Minimal</option>
+                      <option value="digital">Digital</option>
+                      <option value="nature">Nature</option>
+                  </select>
+              </div>
+          </div>
+          
+          <button class="save-btn" id="save-settings">Save Settings</button>
+      </div>
+    </div>
+
+    
+
+    <!-- Todo List Panel -->
+    <div class="app-container" id="todo-window" style="display: none;">
+      <header class="app-header">
+          <div class="header-left">
+              <h1 class="app-title">My Todo List</h1>
+              <svg class="down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+          </div>
+          <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="active">Active</button>
+              <button class="filter-btn" data-filter="completed">Completed</button>
+          </div>
+          <div class="close-btn" id="close-todo">×</div>
+      </header>
+      
+      <div class="todo-container">
+          <div class="add-task-container">
+              <input type="text" id="new-task-input" placeholder="Add a new task...">
+              <button id="add-task-btn">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+              </button>
+          </div>
+          
+          <div class="tasks-list" id="tasks-list">
+              <!-- Tasks will be added here dynamically -->
+          </div>
+          
+          <div class="todo-footer">
+              <span id="tasks-counter">0 items left</span>
+              <button id="clear-completed-btn">Clear completed</button>
+          </div>
+      </div>
+      
+      <!-- Task Edit Modal -->
+      <div class="edit-task-modal" id="edit-task-modal">
+          <div class="modal-backdrop"></div>
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h2>Edit Task</h2>
+                  <button class="close-btn" id="close-edit-modal">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                  </button>
+              </div>
+              
+              <div class="modal-body">
+                  <form id="edit-task-form">
+                      <div class="form-group">
+                          <label for="edit-task-title">Task Title</label>
+                          <input type="text" id="edit-task-title" required>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label for="edit-task-description">Description (optional)</label>
+                          <textarea id="edit-task-description"></textarea>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label for="edit-task-due-date">Due Date (optional)</label>
+                          <input type="date" id="edit-task-due-date">
+                      </div>
+
+                      <div class="form-group">
+                          <label for="edit-task-due-time">Time (optional)</label>
+                          <input type="time" id="edit-task-due-time">
+                      </div>
+                      
+                      <div class="form-group">
+                          <label for="edit-task-priority">Priority</label>
+                          <select id="edit-task-priority">
+                              <option value="low">Low</option>
+                              <option value="medium">Medium</option>
+                              <option value="high">High</option>
+                          </select>
+                      </div>
+                      
+                      <div class="form-actions">
+                          <button type="button" id="delete-task-btn" class="delete-btn">Delete</button>
+                          <button type="submit" class="save-btn">Save Task</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Lists Modal -->
+      <div class="lists-modal" id="lists-modal">
+          <div class="modal-backdrop"></div>
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h2>My Lists</h2>
+                  <button class="close-btn" id="close-lists-modal">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                  </button>
+              </div>
+              
+              <div class="modal-body">
+                  <div class="lists-container" id="lists-container">
+                      <!-- Lists will be added here dynamically -->
+                  </div>
+                  
+                  <div class="add-list-container">
+                      <input type="text" id="new-list-input" placeholder="Add a new list...">
+                      <div class="color-picker">
+                          <span class="color-option selected" data-color="#9764c7" style="background-color: #9764c7;"></span>
+                          <span class="color-option" data-color="#4c9aff" style="background-color: #4c9aff;"></span>
+                          <span class="color-option" data-color="#ff5630" style="background-color: #ff5630;"></span>
+                          <span class="color-option" data-color="#36b37e" style="background-color: #36b37e;"></span>
+                          <span class="color-option" data-color="#ffc400" style="background-color: #ffc400;"></span>
+                      </div>
+                      <button id="add-list-btn" class="add-btn">Add List</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
